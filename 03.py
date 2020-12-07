@@ -1,29 +1,34 @@
+from functools import reduce
+
 empty = '.'
 tree = '#'
 
-right = 3
-down = 1
+plans = [(1,1),(3,1),(5,1),(7,1),(1,2)]
 
 
 def read_map():
     return [line.strip() for line in open("input03.txt")]
 
 
-def extend_map(m, r, d):
+def extend_map(m, f):
     for i in range(len(m)):
-        m[i] = m[i] * (len(m) // d) * r
+        m[i] = m[i] * f
     return m
 
 
 if __name__ == '__main__':
-    map = extend_map(read_map(), right, down)
-    x, y = 0, 0
-    trees = 0
-    while y < len(map):
-        if map[y][x] == tree:
-            trees += 1
-        x += right
-        y += down
-    print(trees)
-
+    m = read_map()
+    f = max([(len(m) // plan[1]) * plan[0] for plan in plans])
+    m = extend_map(m, f)
+    trees = []
+    for plan in plans:
+        x, y = 0, 0
+        hits = 0
+        while y < len(m):
+            if m[y][x] == tree:
+                hits += 1
+            x += plan[0]
+            y += plan[1]
+        trees.append(hits)
+    print(reduce(lambda x, y: x * y, trees))
 
